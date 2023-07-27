@@ -3,6 +3,8 @@ on: [push, pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      CODACY_PROJECT_TOKEN: a4d714cea5364be5ae047f4d2b207b91
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -12,5 +14,7 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer self-update && composer install && composer dump-autoload
-      - name: Run tests and collect coverage
+      - name: Run tests
         run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml --configuration phpunit.xml tests/
+      - name: Upload results
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
